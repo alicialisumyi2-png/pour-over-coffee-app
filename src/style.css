@@ -54,11 +54,15 @@ h1 { max-width: 450px; font-size: clamp(30px, 8vw, 45px); letter-spacing: -.025e
 .content-page { flex: 1; padding: 34px 2px 28px; }
 h2 { font-size: clamp(25px, 6.5vw, 33px); letter-spacing: -.025em; line-height: 1.4; margin: 9px 0 7px; }
 .subcopy { color: var(--muted); font-size: 13px; margin-bottom: 22px; line-height: 1.8; }
-.method-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 24px 0 17px; }
-.method-card { position: relative; min-height: 174px; padding: 17px 14px 15px; border: 1px solid var(--line); background: var(--paper); border-radius: 22px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; box-shadow: var(--soft-shadow); }
+.method-roast { margin-top: 20px; }
+.method-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0 17px; }
+.method-card { position: relative; min-height: 190px; padding: 17px 14px 15px; border: 1px solid var(--line); background: var(--paper); border-radius: 22px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; box-shadow: var(--soft-shadow); }
 .method-card.selected { border: 2px solid #eaa4a0; padding: 16px 13px 14px; background: #fff8f3; }
 .method-card strong { font-size: 18px; margin: 5px 0; }
 .method-card small { font-size: 11px; line-height: 1.5; color: var(--muted); }
+.method-card .method-reason { color: #a26a59; margin-top: 4px; }
+.method-card .method-stages { margin-top: 5px; color: #75685f; font-weight: 700; }
+.kalita-icon { display: grid; place-items: center; color: #9db9ad; font-size: 29px; background: #eaf3ed; border-radius: 50%; }
 .method-icon { width: 74px; height: 68px; object-fit: cover; border-radius: 15px; margin: 4px 0 3px; background: var(--blue); }
 .badge { position: absolute; right: 10px; top: 10px; color: #a26a59; background: var(--blush); padding: 4px 8px; border-radius: 999px; font-size: 10px; }
 .form-card, .recommendation, .tasting-card, .step-card { background: var(--paper); border: 1px solid #eee5db; border-radius: 24px; padding: 18px; box-shadow: var(--soft-shadow); }

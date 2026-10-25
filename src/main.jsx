@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { getRecipe } from './recipes.js'
+import { getRecipe, getRecommendations, methodLabel as getMethodLabel } from './recipes.js'
 import './style.css'
 
 const STORAGE_KEY = 'pour-over-sessions'
@@ -18,6 +18,7 @@ function App() {
   const [running, setRunning] = useState(false)
   const [answers, setAnswers] = useState(emptyAnswers)
   const recipe = useMemo(() => getRecipe(method, roast, Number(dose) || 15), [method, roast, dose])
+  const recommendations = getRecommendations(roast)
   const step = recipe.steps[stepIndex]
 
   useEffect(() => {
@@ -72,7 +73,7 @@ function App() {
     setSessions([])
     localStorage.removeItem(STORAGE_KEY)
   }
-  const methodLabel = method === 'v60' ? 'V60' : '聰明杯'
+  const methodLabel = getMethodLabel(method)
   const canSave = Object.values(answers).every(Boolean)
   const questions = [
     ['acidity', '酸度', ['偏低', '剛剛好', '偏高']],
@@ -96,10 +97,10 @@ function App() {
     </section>}
 
     {screen === 'method' && <section className="content-page">
-      <div className="eyebrow">01 / 選擇器具</div><h2>今天想用哪一種？</h2><p className="subcopy">選好器具，再一起準備這杯咖啡。</p>
+      <div className="eyebrow">01 / 選擇器具</div><h2>今天想用哪一種？</h2><p className="subcopy">先選烘焙度，看看適合這杯的沖煮方式。</p>
+      <fieldset className="method-roast"><legend className="field-label">烘焙度</legend><div className="roast-options">{['淺焙', '中焙', '深焙'].map((item) => <button key={item} className={roast === item ? 'active' : ''} onClick={() => setRoast(item)}>{item}</button>)}</div></fieldset>
       <div className="method-grid">
-        <button className={`method-card ${method === 'v60' ? 'selected' : ''}`} onClick={() => setMethod('v60')}><span className="badge">主推</span><img className="method-icon" src="/illustrations/method-v60.png" alt="V60 濾杯插畫" /><strong>V60</strong><small>手沖濾杯・清爽明亮</small></button>
-        <button className={`method-card ${method === 'clever' ? 'selected' : ''}`} onClick={() => setMethod('clever')}><img className="method-icon" src="/illustrations/method-clever.png" alt="聰明杯插畫" /><strong>聰明杯</strong><small>浸泡式・穩定好上手</small></button>
+        {recommendations.map((item) => <button key={item.id} className={`method-card ${method === item.id ? 'selected' : ''}`} onClick={() => setMethod(item.id)}><span className="badge">推薦 {item.rank}</span>{item.icon ? <img className="method-icon" src={item.icon} alt={`${item.label}插畫`} /> : <span className="method-icon kalita-icon" aria-hidden="true">◉</span>}<strong>{item.label}</strong><small>{item.blurb}</small><small className="method-reason">{item.reason}</small><small className="method-stages">{item.id === 'clever' ? `${item.pourStages} 段浸泡注水` : `${item.pourStages} 段注水`}</small></button>)}
       </div>
       <button className="button primary full" onClick={() => setScreen('setup')}>下一步 <span>→</span></button>
     </section>}
@@ -131,7 +132,7 @@ function App() {
 
     {screen === 'history' && <section className="content-page">
       <div className="eyebrow">你的練習軌跡</div><div className="history-heading"><h2>沖煮紀錄</h2>{sessions.length > 0 && <button className="text-button danger" onClick={clearHistory}>清除全部</button>}</div>
-      {sessions.length === 0 ? <div className="empty-state"><span>☕</span><h3>還沒有沖煮紀錄</h3><p>每一杯都是新的練習，開始你的第一杯吧。</p><button className="button primary" onClick={() => setScreen('method')}>開始沖煮 <span>→</span></button></div> : <div className="history-list">{sessions.map((session) => <article className="history-card" key={session.id}><div className="history-card-top"><strong>{session.method === 'v60' ? 'V60' : '聰明杯'} <span>·</span> {session.dose}g</strong><time>{new Date(session.date).toLocaleDateString('zh-HK')}</time></div><p>{session.bean || '未填豆種'}　/　{session.roast}</p><div className="answer-summary">{Object.entries(session.answers).map(([key, value]) => <span key={key}>{({ acidity: '酸', sweetness: '甜', bitterness: '苦', balance: '萃取', satisfaction: '整體' })[key]}：{value}</span>)}</div></article>)}</div>}
+      {sessions.length === 0 ? <div className="empty-state"><span>☕</span><h3>還沒有沖煮紀錄</h3><p>每一杯都是新的練習，開始你的第一杯吧。</p><button className="button primary" onClick={() => setScreen('method')}>開始沖煮 <span>→</span></button></div> : <div className="history-list">{sessions.map((session) => <article className="history-card" key={session.id}><div className="history-card-top"><strong>{getMethodLabel(session.method)} <span>·</span> {session.dose}g</strong><time>{new Date(session.date).toLocaleDateString('zh-HK')}</time></div><p>{session.bean || '未填豆種'}　/　{session.roast}</p><div className="answer-summary">{Object.entries(session.answers).map(([key, value]) => <span key={key}>{({ acidity: '酸', sweetness: '甜', bitterness: '苦', balance: '萃取', satisfaction: '整體' })[key]}：{value}</span>)}</div></article>)}</div>}
       {sessions.length > 0 && <button className="button secondary full history-new" onClick={() => setScreen('method')}>再沖一杯 <span>→</span></button>}
     </section>}
     <footer>慢慢沖，慢慢找到喜歡的味道 <span>✳</span></footer>
