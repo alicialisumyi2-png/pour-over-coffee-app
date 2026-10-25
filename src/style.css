@@ -36,19 +36,8 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { max-width: 450px; font-size: clamp(30px, 8vw, 45px); letter-spacing: -.025em; line-height: 1.4; margin: 12px 0 8px; font-weight: 800; }
 .lead { max-width: 390px; font-size: 14px; line-height: 1.9; color: #786f68; margin-bottom: 0; }
 .welcome-heart { color: #ef9291; font-size: 28px; padding: 12px; transform: rotate(-12deg); }
-.home-art { width: 100%; height: 285px; margin: 23px 0 20px; position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(145deg, #eaf6fb 0%, #fffaf2 62%, #e8f4e9 100%); border: 1px solid #e7e7dc; box-shadow: inset 0 0 35px rgb(255 255 255 / 60%); }
-.home-art svg { position: absolute; inset: 9% 9% 3%; width: 82%; height: 88%; overflow: visible; }
-.art-sun { position: absolute; width: 155px; height: 155px; border-radius: 50%; background: #f8dfd8; opacity: .78; top: 31px; left: calc(50% - 76px); }
-.art-leaf { position: absolute; width: 125px; height: 53px; border-radius: 100% 0; background: #b6d1ad; opacity: .72; transform: rotate(-36deg); bottom: 24px; left: -16px; }
-.leaf-two { width: 95px; left: auto; right: -8px; bottom: 38px; transform: rotate(30deg); background: #c0dce6; }
-.dripper { fill: #fffaf1; stroke: #75533c; stroke-width: 5; stroke-linejoin: round; }
-.coffee-bed { fill: #75503a; stroke: #6e4a35; stroke-width: 3; }
-.carafe { fill: rgb(255 255 255 / 72%); stroke: #75533c; stroke-width: 5; stroke-linejoin: round; }
-.coffee { fill: #794223; opacity: .94; }
-.carafe-top, .handle { fill: none; stroke: #75533c; stroke-width: 6; stroke-linecap: round; }
-.pour-stream { fill: none; stroke: #8cc7df; stroke-width: 5; stroke-linecap: round; }
-.steam-line { fill: none; stroke: #fff; stroke-width: 5; stroke-linecap: round; opacity: .95; }
-.art-caption { position: absolute; right: 18px; bottom: 14px; z-index: 2; font-size: 11px; color: #78624f; }
+.home-art { width: 100%; height: 285px; margin: 23px 0 20px; overflow: hidden; border-radius: 28px; background: #f7f5ea; border: 1px solid #e7e7dc; box-shadow: var(--soft-shadow); }
+.home-art img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 53%; }
 .home-actions { display: grid; gap: 12px; width: 100%; }
 .button { border: 1px solid #e8d8cc; min-height: 54px; border-radius: 18px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 600; font-size: 14px; transition: background-color .15s, box-shadow .15s, transform .15s; }
 .button:hover { box-shadow: var(--soft-shadow); transform: translateY(-1px); }
@@ -70,7 +59,7 @@ h2 { font-size: clamp(25px, 6.5vw, 33px); letter-spacing: -.025em; line-height: 
 .method-card.selected { border: 2px solid #eaa4a0; padding: 16px 13px 14px; background: #fff8f3; }
 .method-card strong { font-size: 18px; margin: 5px 0; }
 .method-card small { font-size: 11px; line-height: 1.5; color: var(--muted); }
-.method-icon { height: 64px; font: 48px/1 Georgia, serif; color: #b57f62; margin: 7px 0 3px; }
+.method-icon { width: 74px; height: 68px; object-fit: cover; border-radius: 15px; margin: 4px 0 3px; background: var(--blue); }
 .badge { position: absolute; right: 10px; top: 10px; color: #a26a59; background: var(--blush); padding: 4px 8px; border-radius: 999px; font-size: 10px; }
 .form-card, .recommendation, .tasting-card, .step-card { background: var(--paper); border: 1px solid #eee5db; border-radius: 24px; padding: 18px; box-shadow: var(--soft-shadow); }
 .field-label { display: block; font-size: 13px; font-weight: 700; margin: 0 0 9px; }

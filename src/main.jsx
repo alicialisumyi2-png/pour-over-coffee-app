@@ -90,7 +90,7 @@ function App() {
 
     {screen === 'home' && <section className="home-page">
       <div className="home-welcome"><div><div className="eyebrow">SLOW DOWN, POUR WELL</div><h1>嗨，今天也來沖一杯好咖啡吧！</h1><p className="lead">從一壺熱水開始，享受專屬於你的手沖時光。</p></div><span className="welcome-heart" aria-hidden="true">♥</span></div>
-      <div className="home-art" aria-label="手沖咖啡插畫"><span className="art-sun"/><span className="art-leaf leaf-one"/><span className="art-leaf leaf-two"/><svg viewBox="0 0 420 260" role="img" aria-hidden="true"><path className="pour-stream" d="M190 42 C183 70 205 86 201 115"/><path className="dripper" d="M130 110 Q200 88 270 110 L244 178 Q200 196 156 178Z"/><path className="coffee-bed" d="M144 116 Q200 99 256 116 Q200 134 144 116Z"/><path className="carafe" d="M145 185 Q200 202 255 185 L245 229 Q200 246 155 229Z"/><path className="coffee" d="M153 218 Q200 231 247 218 L245 229 Q200 246 155 229Z"/><path className="carafe-top" d="M138 184 Q200 199 262 184"/><path className="handle" d="M258 194 Q303 180 296 215 L250 221"/><path className="steam-line" d="M167 87 Q157 69 168 57 M199 81 Q190 60 200 47 M230 88 Q242 70 233 56"/></svg><span className="art-caption">一杯一練習</span></div>
+      <div className="home-art"><img src="/illustrations/home-hero.png" alt="手沖壺將熱水注入 V60 濾杯，咖啡滴入玻璃分享壺" /></div>
       <div className="home-actions"><button className="button primary" onClick={() => setScreen('method')}>☕　開始沖煮 <span>→</span></button><button className="button secondary" onClick={() => setScreen('history')}><span className="record-icon">▤</span><span>沖煮紀錄</span><span>›</span></button></div>
       <p className="small-note">不求完美，先沖一杯看看。</p>
     </section>}
@@ -98,8 +98,8 @@ function App() {
     {screen === 'method' && <section className="content-page">
       <div className="eyebrow">01 / 選擇器具</div><h2>今天想用哪一種？</h2><p className="subcopy">選好器具，再一起準備這杯咖啡。</p>
       <div className="method-grid">
-        <button className={`method-card ${method === 'v60' ? 'selected' : ''}`} onClick={() => setMethod('v60')}><span className="badge">主推</span><span className="method-icon">▽</span><strong>V60</strong><small>手沖濾杯・清爽明亮</small></button>
-        <button className={`method-card ${method === 'clever' ? 'selected' : ''}`} onClick={() => setMethod('clever')}><span className="method-icon">◒</span><strong>聰明杯</strong><small>浸泡式・穩定好上手</small></button>
+        <button className={`method-card ${method === 'v60' ? 'selected' : ''}`} onClick={() => setMethod('v60')}><span className="badge">主推</span><img className="method-icon" src="/illustrations/method-v60.png" alt="V60 濾杯插畫" /><strong>V60</strong><small>手沖濾杯・清爽明亮</small></button>
+        <button className={`method-card ${method === 'clever' ? 'selected' : ''}`} onClick={() => setMethod('clever')}><img className="method-icon" src="/illustrations/method-clever.png" alt="聰明杯插畫" /><strong>聰明杯</strong><small>浸泡式・穩定好上手</small></button>
       </div>
       <button className="button primary full" onClick={() => setScreen('setup')}>下一步 <span>→</span></button>
     </section>}
