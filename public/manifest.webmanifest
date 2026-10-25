@@ -1,0 +1,10 @@
+{
+  "name": "手沖小教室",
+  "short_name": "手沖小教室",
+  "description": "用簡單的步驟，學習手沖咖啡。",
+  "lang": "zh-Hant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f1e3",
+  "theme_color": "#f7f1e3"
+}
