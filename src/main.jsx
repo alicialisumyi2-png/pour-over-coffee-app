@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { getRecipe, getRecommendations, methodLabel as getMethodLabel } from './recipes.js'
+import { getBrewProfiles, getRecipe, getRecommendations, methodLabel as getMethodLabel } from './recipes.js'
 import './style.css'
 
 const STORAGE_KEY = 'pour-over-sessions'
@@ -22,12 +22,14 @@ function App() {
   const [dose, setDose] = useState(15)
   const [bean, setBean] = useState('')
   const [roast, setRoast] = useState('中焙')
+  const [profileId, setProfileId] = useState('standard')
   const [sessions, setSessions] = useState(loadSessions)
   const [stepIndex, setStepIndex] = useState(0)
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [running, setRunning] = useState(false)
   const [answers, setAnswers] = useState(emptyAnswers)
-  const recipe = useMemo(() => getRecipe(method, roast, Number(dose) || 15), [method, roast, dose])
+  const brewProfiles = useMemo(() => getBrewProfiles(method, roast, Number(dose) || 15), [method, roast, dose])
+  const recipe = useMemo(() => getRecipe(method, roast, Number(dose) || 15, profileId), [method, roast, dose, profileId])
   const recommendations = getRecommendations(roast)
   const step = recipe.steps[stepIndex]
 
@@ -39,6 +41,8 @@ function App() {
     }), 1000)
     return () => window.clearInterval(timer)
   }, [running])
+
+  useEffect(() => setProfileId('standard'), [method, roast, dose])
 
   function beginBrew() {
     setStepIndex(0)
@@ -126,7 +130,7 @@ function App() {
         <label className="field-label" htmlFor="bean">豆種／品名 <span>OPTIONAL</span></label><input id="bean" className="text-input" placeholder="例如：耶加雪菲・水洗" value={bean} onChange={(e) => setBean(e.target.value)} />
         <fieldset><legend className="field-label">烘焙度</legend><div className="roast-options">{['淺焙', '中焙', '深焙'].map((item) => <button key={item} className={roast === item ? 'active' : ''} onClick={() => setRoast(item)}>{item}</button>)}</div></fieldset>
       </div>
-      <div className="recommendation"><div className="recommendation-head"><strong>這杯的教學建議</strong><span>✳</span></div><div className="stats"><div><small>水粉比</small><strong>{recipe.ratio}</strong></div><div><small>總水量</small><strong>{recipe.water}<i>g</i></strong></div><div><small>水溫</small><strong>{recipe.temp}</strong></div></div><p>研磨：{recipe.grind}</p><p className="disclaimer">教學預設，非絕對真理</p></div>
+      <div className="recommendation"><div className="recommendation-head"><strong>這杯的教學建議</strong><span>✳</span></div><div className="profile-list">{brewProfiles.map((profile) => <button type="button" key={profile.id} className={`profile-card ${profileId === profile.id ? 'selected' : ''}`} aria-pressed={profileId === profile.id} onClick={() => setProfileId(profile.id)}><span className="profile-title">{profile.label}<span>{profile.pourStages} 段{method === 'clever' ? '浸泡注水' : '注水'}</span></span><small className="profile-reason">{profile.reason}</small><span className="profile-stats"><span><small>水粉比</small><strong>1:{Number.isInteger(profile.ratio) ? profile.ratio : profile.ratio.toFixed(2).replace(/0$/, '')}</strong></span><span><small>總水量</small><strong>{profile.water}g</strong></span><span><small>水溫</small><strong>{profile.temp}</strong></span></span><small className="profile-grind">研磨：{profile.grind}</small></button>)}</div><p className="disclaimer">教學預設，非絕對真理</p></div>
       <button className="button primary full" onClick={beginBrew}>開始跟著沖 <span>→</span></button>
     </section>}
 

@@ -28,17 +28,29 @@ export function getRecommendations(roast = '中焙') {
   return (rankings[roast] ?? rankings['中焙']).map(([id, reason], index) => ({ ...methodCatalog[id], reason, rank: index + 1, pourStages: pourStages[id] }))
 }
 
-export function getRecipe(method, roast = '中焙', dose = 15) {
-  const profile = roastSettings[roast] ?? roastSettings['中焙']
-  const water = Math.round(dose * profile.ratio)
-  const ratioLabel = `1:${Number.isInteger(profile.ratio) ? profile.ratio : profile.ratio.toFixed(2).replace(/0$/, '')}`
-  const common = { ratio: ratioLabel, water, temp: profile.temp, grind: profile.grind }
+export function getBrewProfiles(method, roast = '中焙', dose = 15) {
+  const base = roastSettings[roast] ?? roastSettings['中焙']
+  const clever = method === 'clever'
+  const adjustTemp = (amount) => base.temp.replace(/\d+/g, (value) => String(Number(value) + amount))
+  const profiles = [
+    { id: 'mild', label: '溫和／清爽', reason: clever ? '水量多一些，低溫短浸更輕柔。' : '水量多一些，低溫沖煮更清爽。', ratio: base.ratio + 1, temp: adjustTemp(-2), grind: base.grind, soak: 120 },
+    { id: 'standard', label: '標準教學', reason: '均衡好上手，適合先建立手感。', ratio: base.ratio, temp: base.temp, grind: base.grind, soak: 135 },
+    { id: 'strong', label: '濃郁／重萃', reason: clever ? '水溫提高、降低水量並延長浸泡。' : '水量少一些，水溫提高讓風味更集中。', ratio: base.ratio - 1, temp: adjustTemp(2), grind: base.grind, soak: 150 },
+  ]
+  return profiles.map((profile) => ({ ...profile, water: Math.round(dose * profile.ratio), pourStages: pourStages[method] ?? pourStages.v60 }))
+}
+
+export function getRecipe(method, roast = '中焙', dose = 15, profileId = 'standard') {
+  const selected = getBrewProfiles(method, roast, dose).find((item) => item.id === profileId) ?? getBrewProfiles(method, roast, dose)[1]
+  const { ratio: ratioValue, water, temp, grind } = selected
+  const ratioLabel = `1:${Number.isInteger(ratioValue) ? ratioValue : ratioValue.toFixed(2).replace(/0$/, '')}`
+  const common = { ratio: ratioLabel, water, temp, grind, pourStages: selected.pourStages, profileId: selected.id }
   const steps = method === 'clever'
     ? [
         { title: '準備濾紙', detail: '放入濾紙並用熱水潤濕，倒掉潤紙水。', seconds: 15 },
         { title: '加入咖啡粉', detail: `倒入 ${dose}g 咖啡粉，輕拍讓粉床平整。`, seconds: 15 },
         { title: '注水浸泡', detail: `注入 ${water}g 熱水，輕輕攪拌或搖勻。`, seconds: 15 },
-        { title: '等待浸泡', detail: '讓咖啡浸泡，依喜好可在 2:00–2:30 之間調整。', seconds: 135 },
+        { title: '等待浸泡', detail: `浸泡約 ${Math.round(selected.soak / 60)} 分 ${selected.soak % 60 ? `${selected.soak % 60} 秒` : ''}，再釋放咖啡。`, seconds: selected.soak },
         { title: '釋放咖啡', detail: '將聰明杯放到杯上，等待咖啡流完，約 1 分鐘。', seconds: 60 },
       ]
     : method === 'kalita' ? [

@@ -89,6 +89,16 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .stats i { font-style: normal; font-size: 12px; margin-left: 3px; }
 .recommendation > p { font-size: 12px; margin: 0; }
 .recommendation .disclaimer { text-align: right; color: #8a827b; font-size: 10px; margin-top: 9px; }
+.profile-list { display: grid; gap: 8px; margin-top: 12px; }
+.profile-card { width: 100%; text-align: left; color: var(--ink); background: #fffaf5; border: 1px solid #eadfd5; border-radius: 16px; padding: 12px; cursor: pointer; }
+.profile-card.selected { background: #fff; border: 2px solid #84aebc; box-shadow: 0 0 0 3px #dcecf0; padding: 11px; }
+.profile-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+.profile-title > span { color: var(--muted); font-size: 10px; font-weight: 500; white-space: nowrap; }
+.profile-reason, .profile-grind { display: block; color: var(--muted); font-size: 10px; margin-top: 5px; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 6px; margin-top: 10px; }
+.profile-stats > span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.profile-stats small { color: var(--muted); font-size: 9px; }
+.profile-stats strong { font-size: 13px; white-space: nowrap; }
 .timer-heading, .history-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .timer-heading span { flex: none; font: 12px 'DM Mono', monospace; color: var(--muted); }
 .progress-track { height: 7px; background: #e9edf0; margin: 13px 0 20px; border-radius: 10px; overflow: hidden; }

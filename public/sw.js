@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pour-over-v2'
+const CACHE_NAME = 'pour-over-v3'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting())

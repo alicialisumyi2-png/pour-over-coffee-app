@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { getRecipe, getRecommendations, pourStages } from './recipes.js'
+import { getBrewProfiles, getRecipe, getRecommendations, pourStages } from './recipes.js'
 
 test('V60 scales water and bloom to dose', () => {
   const recipe = getRecipe('v60', '中焙', 20)
@@ -20,6 +20,28 @@ test('Clever uses scaled immersion water and drain step', () => {
   assert.equal(recipe.water, 270)
   assert.match(recipe.steps[2].detail, /270g/)
   assert.match(recipe.steps[4].title, /釋放/)
+})
+
+test('brew profiles scale with dose and standard is the default recipe', () => {
+  for (const method of ['v60', 'kalita', 'clever']) {
+    const profiles = getBrewProfiles(method, '中焙', 20)
+    assert.deepEqual(profiles.map(({ id }) => id), ['mild', 'standard', 'strong'])
+    assert.equal(profiles[1].water, 300)
+    assert.equal(getRecipe(method, '中焙', 20).water, 300)
+    assert.ok(profiles[0].water > profiles[1].water)
+    assert.ok(profiles[2].water < profiles[1].water)
+  }
+})
+
+test('selected profiles drive pour amounts and Clever soak time', () => {
+  const strongV60 = getRecipe('v60', '中焙', 15, 'strong')
+  assert.equal(strongV60.water, 210)
+  assert.match(strongV60.steps[2].detail, /126g/)
+  const mildClever = getRecipe('clever', '中焙', 15, 'mild')
+  const strongClever = getRecipe('clever', '中焙', 15, 'strong')
+  assert.equal(mildClever.steps[3].seconds, 120)
+  assert.equal(strongClever.steps[3].seconds, 150)
+  assert.equal(mildClever.pourStages, 1)
 })
 
 test('Kalita scales water and includes a flat-bottom two-pour profile', () => {
