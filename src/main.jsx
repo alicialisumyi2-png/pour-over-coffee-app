@@ -6,13 +6,23 @@ import './style.css'
 const STORAGE_KEY = 'pour-over-sessions'
 const emptyAnswers = { acidity: '', sweetness: '', bitterness: '', balance: '', satisfaction: '' }
 
+function loadSessions() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const parsed = stored ? JSON.parse(stored) : []
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
 function App() {
   const [screen, setScreen] = useState('home')
   const [method, setMethod] = useState('v60')
   const [dose, setDose] = useState(15)
   const [bean, setBean] = useState('')
   const [roast, setRoast] = useState('中焙')
-  const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
+  const [sessions, setSessions] = useState(loadSessions)
   const [stepIndex, setStepIndex] = useState(0)
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [running, setRunning] = useState(false)
@@ -65,7 +75,11 @@ function App() {
     const entry = { id: Date.now(), date: new Date().toISOString(), method, dose: Number(dose), bean: bean.trim(), roast, answers }
     const next = [entry, ...sessions]
     setSessions(next)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    } catch {
+      // Keep the new session available for the current app session.
+    }
     setScreen('history')
   }
   function clearHistory() {
