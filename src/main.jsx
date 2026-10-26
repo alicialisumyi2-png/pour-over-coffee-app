@@ -75,6 +75,13 @@ function App() {
       setScreen('tasting')
     }
   }
+  function previousStep() {
+    if (stepIndex === 0) return
+    const previous = stepIndex - 1
+    setStepIndex(previous)
+    setSecondsLeft(recipe.steps[previous].seconds)
+    setRunning(false)
+  }
   function saveSession() {
     const entry = { id: Date.now(), date: new Date().toISOString(), method, dose: Number(dose), bean: bean.trim(), roast, answers }
     const next = [entry, ...sessions]
@@ -137,8 +144,18 @@ function App() {
     {screen === 'timer' && <section className="content-page timer-page">
       <div className="eyebrow">03 / 跟著節奏沖</div><div className="timer-heading"><h2>{methodLabel} 沖煮中</h2><span>{stepIndex + 1} / {recipe.steps.length}</span></div>
       <div className="progress-track"><span style={{ width: `${((stepIndex + 1) / recipe.steps.length) * 100}%` }} /></div>
-      <article className="step-card"><div className="step-number">STEP {String(stepIndex + 1).padStart(2, '0')}</div><h3>{step.title}</h3><p>{step.detail}</p><div className="countdown">{String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:{String(secondsLeft % 60).padStart(2, '0')}</div><small>步驟計時・可依手感調整</small></article>
-      <div className="timer-controls"><button className="button secondary" onClick={toggleTimer}>{running ? '暫停' : secondsLeft === 0 ? '重新計時' : '開始計時'}</button><button className="button primary" onClick={nextStep}>{stepIndex === recipe.steps.length - 1 ? '完成沖煮' : '下一步'} <span>→</span></button></div>
+      <article className="step-card">
+        <div className="step-number">STEP {String(stepIndex + 1).padStart(2, '0')} · {step.kind === 'pour' ? '注水中' : step.kind === 'wait' ? '等待' : '準備'}</div>
+        <div className="countdown" aria-live="polite">{String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:{String(secondsLeft % 60).padStart(2, '0')}</div>
+        <h3>{step.title}</h3>
+        {step.kind === 'pour' ? <>
+          <div className="pour-pill">第 {recipe.steps.slice(0, stepIndex + 1).filter((item) => item.kind === 'pour').length} 段注水 · +{step.pourAmount}g</div>
+          <div className="water-target"><span>注水至</span><strong>{step.targetWater}<small>g</small></strong><span className="water-total">/ {recipe.water} g</span></div>
+        </> : <div className="timer-status">{step.kind === 'wait' ? '讓咖啡慢慢萃取' : '依照步驟完成準備'}</div>}
+        <p>{step.detail}</p>
+        <div className="next-preview"><span>接下來</span><strong>{recipe.steps[stepIndex + 1]?.title ?? '品嚐與紀錄'}</strong>{recipe.steps[stepIndex + 1] && <small>{recipe.steps[stepIndex + 1].kind === 'pour' ? `+${recipe.steps[stepIndex + 1].pourAmount}g` : `${recipe.steps[stepIndex + 1].seconds}s`}</small>}</div>
+      </article>
+      <div className="timer-controls"><button className="step-nav" aria-label="上一步" disabled={stepIndex === 0} onClick={previousStep}>‹<small>上一步</small></button><button className="timer-play" aria-label={running ? '暫停計時' : '開始計時'} onClick={toggleTimer}>{running ? 'Ⅱ' : '▶'}</button><button className="step-nav" aria-label={stepIndex === recipe.steps.length - 1 ? '完成沖煮' : '下一步'} onClick={nextStep}>{stepIndex === recipe.steps.length - 1 ? '✓' : '›'}<small>{stepIndex === recipe.steps.length - 1 ? '完成沖煮' : '下一步'}</small></button></div>
       <button className="text-button" onClick={() => setScreen('setup')}>← 回到設定</button>
     </section>}
 

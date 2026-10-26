@@ -51,6 +51,25 @@ test('Kalita scales water and includes a flat-bottom two-pour profile', () => {
   assert.match(recipe.steps[3].detail, /270g/)
 })
 
+test('recipe steps expose typed prep, pour, and wait data with incremental targets', () => {
+  for (const method of ['v60', 'kalita', 'clever']) {
+    const recipe = getRecipe(method, '中焙', 20)
+    for (const step of recipe.steps) {
+      assert.ok(['prep', 'pour', 'wait'].includes(step.kind))
+      if (step.kind === 'pour') {
+        assert.ok(Number.isFinite(step.targetWater))
+        assert.ok(Number.isFinite(step.pourAmount))
+      } else {
+        assert.equal(step.targetWater, null)
+        assert.equal(step.pourAmount, null)
+      }
+    }
+    const pours = recipe.steps.filter(({ kind }) => kind === 'pour')
+    assert.equal(pours.at(-1).targetWater, recipe.water)
+    assert.equal(pours.reduce((total, step) => total + step.pourAmount, 0), recipe.water)
+  }
+})
+
 test('recommendations return three roast-ranked methods with correct pour stage counts', () => {
   for (const roast of ['淺焙', '中焙', '深焙']) {
     const recommendations = getRecommendations(roast)
