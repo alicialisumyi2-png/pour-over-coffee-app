@@ -37,7 +37,22 @@ export function getBrewProfiles(method, roast = '中焙', dose = 15) {
     { id: 'standard', label: '標準教學', reason: '均衡好上手，適合先建立手感。', ratio: base.ratio, temp: base.temp, grind: base.grind, soak: 135 },
     { id: 'strong', label: '濃郁／重萃', reason: clever ? '水溫提高、降低水量並延長浸泡。' : '水量少一些，水溫提高讓風味更集中。', ratio: base.ratio - 1, temp: adjustTemp(2), grind: base.grind, soak: 150 },
   ]
-  return profiles.map((profile) => ({ ...profile, water: Math.round(dose * profile.ratio), pourStages: pourStages[method] ?? pourStages.v60 }))
+  if (clever) {
+    profiles.push({
+      id: 'switch-immersion',
+      label: 'Hario Switch 浸泡',
+      reason: '關閉閥門浸泡後再開閥放出；水粉比約 1:13.6，水溫固定 90–92°C。參考 fugwai_coffee 的 Hario Switch 浸泡做法。',
+      ratio: 13.6,
+      temp: '90–92°C',
+      grind: '中細；Comandante C40 約 26 格可作參考',
+      soak: 95,
+    })
+  }
+  return profiles.map((profile) => ({
+    ...profile,
+    water: Math.round(dose * profile.ratio),
+    pourStages: profile.id === 'switch-immersion' ? 2 : (pourStages[method] ?? pourStages.v60),
+  }))
 }
 
 export function getRecipe(method, roast = '中焙', dose = 15, profileId = 'standard') {
@@ -50,6 +65,22 @@ export function getRecipe(method, roast = '中焙', dose = 15, profileId = 'stan
   const pour = (title, detail, seconds, targetWater, previousTarget = 0) => ({ title, detail, seconds, kind: 'pour', targetWater, pourAmount: targetWater - previousTarget })
   const prep = (title, detail, seconds) => ({ title, detail, seconds, kind: 'prep', targetWater: null, pourAmount: null })
   const wait = (title, detail, seconds) => ({ title, detail, seconds, kind: 'wait', targetWater: null, pourAmount: null })
+  if (method === 'clever' && selected.id === 'switch-immersion') {
+    const switchBloom = Math.round(dose * 50 / 14)
+    // From start of bloom wait: 悶蒸 40s + second pour 15s + soak 95s = 150s (2:30), then open the valve.
+    return {
+      ...common,
+      steps: [
+        prep('關閉閥門並準備濾紙', '關閉閥門（或先別放到杯上），放入濾紙並用熱水潤濕，倒掉潤紙水。', 15),
+        prep('加入咖啡粉', `倒入 ${dose}g 咖啡粉，輕拍讓粉床平整。`, 15),
+        pour('注水悶蒸', `注水至 ${switchBloom}g。`, 15, switchBloom),
+        wait('悶蒸', '悶蒸 40 秒。', 40),
+        pour('繼續注水', `繼續注水至總量 ${water}g（閥門保持關閉）。`, 15, water, switchBloom),
+        wait('浸泡', '浸泡至總計約 2 分 30 秒，再開閥。', 95),
+        wait('開啟閥門放出', '開啟閥門／放到杯上，等待咖啡流完（約 60 秒）。', 60),
+      ],
+    }
+  }
   const steps = method === 'clever'
     ? [
         prep('準備濾紙', '放入濾紙並用熱水潤濕，倒掉潤紙水。', 15),
